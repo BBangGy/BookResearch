@@ -1,0 +1,78 @@
+@import "index/searhDialog.css";
+@import "index/findDialog.css";
+@import "index/mapdialog.css";
+
+html
+{
+    height: 100%;
+}
+body {
+    height: 65rem;
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+body:has(.loading.visible) {
+    overflow: hidden;
+}
+body > .loading {
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    backdrop-filter: blur(0.5rem);
+    background-color:#212121a0;
+    opacity: 0;
+    position: fixed;
+    pointer-events: none;
+    transition-duration: 125ms;
+    transition-property: opacity;
+
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+}
+
+body > .loading.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@keyframes animation-loading-icon {
+    to{
+        transform: rotateZ(0deg);
+    }from{
+             transform: rotateZ(360deg);
+         }
+
+}
+
+body > .loading > .icon {
+    animation-name: animation-loading-icon;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+body > .loading > .caption {
+    font-size: 1.2rem;
+    background-color: #f5f5f5;
+    transition-delay: 125ms ;
+    padding: 1rem 1rem;
+}
+
+body > .loading > .icon,
+body > .loading > .caption{
+    opacity: 0;
+    position: relative;
+    transition-property: top,opacity;
+    transition-duration: 125ms;
+}
+
+body > .loading.visible > .icon,
+body > .loading.visible > .caption{
+    top: 0 ;
+    opacity: 1;
+}

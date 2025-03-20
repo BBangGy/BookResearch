@@ -1,0 +1,170 @@
+
+#find-dialog {
+    width: 100%;
+    height: 100%;
+    background-color: #17202aa0;
+    opacity: 0;
+    transition-duration: 150ms;
+    transition-property: opacity;
+    transition-timing-function: ease;
+    pointer-events: none;
+    position: fixed;
+    z-index: 2;
+}
+
+#find-dialog.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#find-dialog > .content > .list > .message.empty {
+    padding: 0.5rem 0;
+
+    align-items: center;
+    display: flex;
+    font-size: 1.5rem;
+    flex-direction: column;
+    justify-content: center;
+    color: #101010;
+}
+
+#find-dialog > .close {
+    right: 50%;
+    transform: translateX(50%);
+    width: 50rem;
+    height: 2rem;
+    position: absolute;
+
+    background-color: #EEF2F8;
+    bottom: 2.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    color: #101010;
+    cursor: pointer;
+}
+
+#find-dialog > .close:hover {
+    background-color: #838383;
+    color: #ffffff;
+}
+
+#find-dialog > .content {
+    top: 50%;
+    left: 50%;
+    width: 50rem;
+    height: 45rem;
+    transform: translate(-50%, -50%);
+    padding: 0.9rem 0.5rem;
+    position: absolute;
+
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    box-shadow: 0 0 0.9rem 0.005rem #101010;
+    border: 0.0625rem solid #727272;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden auto;
+
+}
+
+#find-dialog > .content > .list {
+    padding: 0.5rem 0.5rem;
+
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+#find-dialog > .content > .list > .book {
+    width: 48rem;
+    height: 11.25rem;
+
+    align-items: center;
+    background-color: #ffffff;
+    border: 0.0625rem solid #101010;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-start;
+    line-height: 1.5rem;
+}
+
+#find-dialog > .content > .list > .book:hover {
+    border: 0.07rem solid #101010;
+    box-shadow: 0 0 0.5rem 0.1rem #00000050;
+}
+
+#find-dialog > .content > .list > .book > .image > .thumbnail > .img {
+    align-items: center;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#find-dialog > .content > .list > .book > .detail {
+    align-items: stretch;
+    color: #101010;
+    display: flex;
+    font-size: 1.2rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+}
+
+#find-dialog > .content > .list > .book > .detail > .author-info {
+    width: 100%;
+    height: 100%;
+
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+#find-dialog > .content > .total-count {
+    width: 100%;
+    height: 2rem;
+    padding: 0.5rem 0.5rem;
+
+    align-items: center;
+    background-color: #F8FBFC;
+    border-radius: 0.5rem;
+    color: #101010;
+    display: flex;
+    font-weight: 600;
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+
+#find-dialog > .content > .total-count > span:nth-child(2) {
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+#find-dialog > .content > .sort-form {
+    top: 1.375rem;
+    right: 0;
+    width: 5rem;
+    height: 5rem;
+    position: absolute;
+}
+
+#find-dialog > .content > .sort-form > .label > select {
+    cursor: pointer;
+    color: #000000;
+    border: none;
+    outline: none;
+}
