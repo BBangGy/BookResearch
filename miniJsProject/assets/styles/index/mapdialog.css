@@ -3,8 +3,9 @@
     height: 100%;
     background-color: #727272a0;
     position: fixed;
-    pointer-events: none;
-    opacity: 0;
+    /*pointer-events: none;*/
+    opacity: 1;
+    /*gap: 1rem;*/
     z-index: 3;
     transition-duration: 125ms;
     transition-property: opacity;
@@ -28,25 +29,67 @@
 }
 #map-container > .location-search{
     position: absolute;
-    right: 0;
-    width: 20rem;
+    right: 50%;
+    transform: translateX(50%);
+    width: 50rem;
     height: 4rem;
-    background-color: #727272;
+    /*background-color: #727272;*/
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
 }
 #map-container > .location-search > .label> input{
     top: 0;
     right: 0;
-    width: 15rem;
+    width: 30rem;
+    height: 1.5rem;
+    outline: none;
+    border:none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.5rem;
 }
-#map-container > .location-search > .button.close {
+#map-container > .location-search > .label>.caption {
+    white-space: nowrap;
+}
+#map-container > .location-search >.find{
+    width: 5rem;
+    height: 2.5rem;
+    outline: none;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #eef2f9;
+}
+#map-container > .location-search >.find:hover{
+    background-color: #E2E5E8;
+}
+#map-container > .location-search >.find:active{
+    background-color: silver;
+    color: white;
+}
+#map-container > .button.close {
+    position: absolute;
     width: 4rem;
-    background-color: #1ca017;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 0;
+    background-color: #eef2f9;
     border-radius: 0.5rem;
     border: none;
     padding: 0.5rem 0.5rem;
 }
 
-#map-container > .location-search > .button.close:active {
-    background-color: #0d490a;
+#map-container > .button.close:active {
+    background-color: silver;
     color: #f1f1f1;
+
+}
+
+#map-container>.location-search>.label{
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
 }

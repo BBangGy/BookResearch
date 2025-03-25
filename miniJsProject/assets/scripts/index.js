@@ -219,7 +219,6 @@ const mapInstance = new kakao.maps.Map($map,
     //처음에 지도를 열었을때 표시해주는 위도와경도를 정해서 띄워준다.
 );
 const input = $mapContainer.querySelector(':scope>.location-search>.label>.book-title');
-const nearBy = input.value;
 document.getElementById('confirm').onclick = () => {
     showMapDialog();
     currentLocation();
@@ -235,9 +234,7 @@ let currentMarker;
 const currentInfoWindow = new kakao.maps.InfoWindow({
     content: '<div style="width: 150px; text-align: center; padding: 0.5rem 1rem;background-color:deepskyblue; color: #ffffff;">현위치</div>'
 })
-const destinationInfoWindow = new kakao.maps.InfoWindow({
-    content: '<div style="width:150px; text-align: center; padding:0.5rem 1rem;">도착지</div>',
-})
+
 function currentLocation() {
     //navigator.geolocation를 사용해 현재 위치를 작성할 수 있다.
     if (navigator.geolocation) {
@@ -246,82 +243,77 @@ function currentLocation() {
             let lng = position.coords.longitude;//현재 위치의 경도
             let locPosition = new kakao.maps.LatLng(lat, lng);
             //현재 위치의 위도와 경도를 지정.
+            mapInstance.setCenter(locPosition);
+            mapInstance.setLevel(3);
 
             currentMarker = new kakao.maps.Marker({
                 map: mapInstance,
                 position: locPosition,
             })
-
             currentInfoWindow.open(mapInstance, currentMarker);
-
         })
     }
 }
 
-$mapContainer.querySelector(':scope>.location-search>.find').onclick = (e) => {
+const libraryList = [];
+const mapInput = $mapContainer.querySelector('.location-search>.label>.book-title')
+$mapContainer.querySelector('.location-search>.find').onclick = (e) => {
     e.preventDefault();
-    console.log(findLocation('대구도서관'));
+    findLocation(mapInput.value);
 }
 
-let coordinates;
 
-function markerOverListener(map, marker, infowindow) {
-    return function () {
-        infowindow.open(map, marker)
-    }
-}
-function markerOutListener(infowindow){
-    return () => {
-        infowindow.close();
-    };
-}
 function findLocation(destination) {
     const xhr = new XMLHttpRequest();
+    const bounds = new kakao.maps.LatLngBounds();// 지도 범위 조정용.
+
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
         hideLoading();
         if (xhr.status < 200 || xhr.status >= 400) {
-            alert('요청실패');
+            alert('요청 실패');
             return;
         }
         const response = JSON.parse(xhr.responseText);
-        console.log(response);
-        //주변 도서관 위치를 배열로 저장하기 위한 변수
-        const libraryList = [];
-        for (let i = 0; i < response.documents.length; i++) {
-            coordinates = new kakao.maps.LatLng(response.documents[i].y, response.documents[i].x);
-            libraryList.push(coordinates);
+        const places = response.documents;
+        console.log(places);
+        if (places.length === 0) {
+            alert("검색결과가 없다.");
         }
-        //도서관 위치에다가 마크 표시하기 성공
-        for (let i = 0; i < libraryList.length; i++) {
-            destinationMarker = new kakao.maps.Marker({
-                map: mapInstance,
-                position: libraryList[i],
-            })
-            let infoWindow = new kakao.maps.InfoWindow({
-                content:`도서관${[i]}`
-            })
-            kakao.maps.event.addListener(destinationMarker, 'mouseover', markerOverListener($map, destinationMarker, infoWindow));
-            kakao.maps.event.addListener(destinationMarker, 'mouseout', markerOutListener(infoWindow));
-        }
-        // coordinates = new kakao.maps.LatLng(response.documents[0].y, response.documents[0].x);
-        // destinationMarker = new kakao.maps.Marker({
-        //     map: mapInstance,
-        //     position: coordinates,
-        // })
-        // destinationInfoWindow.open(mapInstance, destinationMarker);
-        // console.log(coordinates);
-    }
 
-    const url = new URL('https://dapi.kakao.com/v2/local/search/keyword');
+        for (let i = 0; i < places.length; i++) {
+            const place = places[i];
+            const position = new kakao.maps.LatLng(place.y, place.x);
+            bounds.extend(position);
+            const marker = new kakao.maps.Marker({
+                map: mapInstance,//marker를 어디 지도에 띄울지 정하기 위함.
+                position: position
+            })
+            const infoWindow = new kakao.maps.InfoWindow(
+                {
+                    content: `<div style="width:15rem; padding:0.5rem 0.5rem;text-align: center;">${place.place_name}<br>
+<span style="text-decoration: underline; color: orangered;text-align: center; ">${place.address_name}</span>
+                              </div>`
+                }
+            );
+            kakao.maps.event.addListener(marker, 'mouseover', () => {
+                infoWindow.open(mapInstance, marker);
+            });
+            kakao.maps.event.addListener(marker, 'mouseout', () => {
+                infoWindow.close(mapInstance, marker);
+            });
+        }
+        mapInstance.setBounds(bounds);
+        mapInput.value = '';
+    }
+    const url = new URL('https://dapi.kakao.com/v2/local/search/keyword.json'); // .json 누락 주의!
     url.searchParams.set('query', `${destination}`);
-    url.searchParams.set('radius', '10000'); //반경 10km안에서 알려준다.
-    // url.searchParams.set('category_group_code', 'CT1');
+    url.searchParams.set('radius', '10000');
+    showLoading();
     xhr.open('GET', url.toString());
     xhr.setRequestHeader('Authorization', `KakaoAK ${restApiKey}`);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 }
-
