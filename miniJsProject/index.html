@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./assets/styles/common.css">
     <link rel="stylesheet" href="./assets/styles/index.css">
+    <link rel="icon" href="./assets/images/index.main.logo.png">
     <title>KoBook</title>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=fbde63f40aa96238f157c7da74dad60f&libraries=LIBRARY"></script>
@@ -67,16 +68,24 @@
     </div>
     <button class="close">닫기</button>
 </div>
-<button id="confirm" type="button">열려라.</button>
+<button id="confirm" type="button">
+    <img src="./assets/images/index.map.location.png" alt="">
+</button>
 <div id="map-container" class="">
-    <div class="map">
-    </div>
+    <div class="map"></div>
     <form class="location-search">
         <label class="label">
-            <input type="text" class="book-title">
+            <span class="caption">주변 도서관 찾기</span>
+            <input type="text" minlength="1" maxlength="50" class="book-title" placeholder="입력해주세요.">
         </label>
-        <button class="button close" type="button">닫기</button>
+        <button class="find" type="submit">찾기</button>
     </form>
+    <div class="library-list">
+
+    </div>
+    <div class="library-detail">
+    </div>
+    <button class="button close" type="button">닫기</button>
 </div>
 </body>
 </html>

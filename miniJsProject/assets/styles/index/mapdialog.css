@@ -3,9 +3,9 @@
     height: 100%;
     background-color: #727272a0;
     position: fixed;
-    /*pointer-events: none;*/
-    opacity: 1;
-    /*gap: 1rem;*/
+    pointer-events: none;
+    opacity: 0;
+    gap: 1rem;
     z-index: 3;
     transition-duration: 125ms;
     transition-property: opacity;
@@ -26,6 +26,68 @@
     position: absolute;
 
     border-radius: 0.5rem;
+}
+#map-container>.library-list::-webkit-scrollbar{
+    scroll-behavior: smooth;
+}
+
+#map-container>.library-list {
+    width: 20rem;
+    height: 20rem;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.5rem;
+    border: 0.0625rem solid #000000;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    top: 0;
+    left: 3rem;
+    transform: translateY(50%);
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    overflow-y: scroll;
+}
+#map-container>.library-list a{
+    text-decoration: none;
+    color:#000000;
+}
+#map-container>.library-list.visible{
+    opacity: 1;
+    pointer-events: auto;
+}
+#map-container>.library-list>.detail{
+    background-color: deepskyblue;
+    width: 100%;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+#map-container>.library-detail {
+    position: absolute;
+    bottom: 30%;
+    left: 3rem;
+    padding: 0.5rem 0.5rem;
+    transform: translateY(50%);
+    border-radius: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    width: 20rem;
+    height: auto;
+    background-color: white;
+}
+#map-container>.library-detail>.content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+}
+#map-container>.library-detail.visible{
+    opacity: 1;
+    pointer-events: auto;
 }
 #map-container > .location-search{
     position: absolute;
@@ -71,6 +133,7 @@
 #map-container > .button.close {
     position: absolute;
     width: 4rem;
+    height: 2rem;
     right: 50%;
     transform: translateX(50%);
     bottom: 0;
