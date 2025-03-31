@@ -218,6 +218,7 @@ const mapInstance = new kakao.maps.Map($map,
     }
     //처음에 지도를 열었을때 표시해주는 위도와경도를 정해서 띄워준다.
 );
+
 const input = $mapContainer.querySelector(':scope>.location-search>.label>.book-title');
 document.getElementById('confirm').onclick = () => {
     showMapDialog();
@@ -228,19 +229,19 @@ $close.onclick = () => {
     hideMapDialog();
 }
 
-let destinationMarker;
 let currentMarker;
 
 const currentInfoWindow = new kakao.maps.InfoWindow({
     content: '<div style="width: 150px; text-align: center; padding: 0.5rem 1rem;background-color:deepskyblue; color: #ffffff;">현위치</div>'
 })
-
+let lat;
+let lng;
 function currentLocation() {
     //navigator.geolocation를 사용해 현재 위치를 작성할 수 있다.
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
-            let lat = position.coords.latitude;//현재 위치의 위도
-            let lng = position.coords.longitude;//현재 위치의 경도
+            lat = position.coords.latitude;//현재 위치의 위도
+            lng = position.coords.longitude;//현재 위치의 경도
             let locPosition = new kakao.maps.LatLng(lat, lng);
             //현재 위치의 위도와 경도를 지정.
             mapInstance.setCenter(locPosition);
@@ -255,18 +256,20 @@ function currentLocation() {
     }
 }
 
-const libraryList = [];
+
 const mapInput = $mapContainer.querySelector('.location-search>.label>.book-title')
 $mapContainer.querySelector('.location-search>.find').onclick = (e) => {
     e.preventDefault();
     findLocation(mapInput.value);
 }
 
+const libList = $mapContainer.querySelector(':scope>.library-list');
+const libDetail = $mapContainer.querySelector(':scope>.library-detail');
 
 function findLocation(destination) {
     const xhr = new XMLHttpRequest();
     const bounds = new kakao.maps.LatLngBounds();// 지도 범위 조정용.
-
+    const libraryList = '';
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
@@ -282,7 +285,7 @@ function findLocation(destination) {
         if (places.length === 0) {
             alert("검색결과가 없다.");
         }
-
+        libList.innerHTML = '';
         for (let i = 0; i < places.length; i++) {
             const place = places[i];
             const position = new kakao.maps.LatLng(place.y, place.x);
@@ -291,22 +294,67 @@ function findLocation(destination) {
                 map: mapInstance,//marker를 어디 지도에 띄울지 정하기 위함.
                 position: position
             })
+
+
             const infoWindow = new kakao.maps.InfoWindow(
                 {
                     content: `<div style="width:15rem; padding:0.5rem 0.5rem;text-align: center;">${place.place_name}<br>
-<span style="text-decoration: underline; color: orangered;text-align: center; ">${place.address_name}</span>
                               </div>`
                 }
             );
+            kakao.maps.event.addListener(marker, 'click', () => {
+
+            })
+
+            let span = document.createElement('span');
+            span.classList.add('detail')
+            span.innerHTML = `
+            <h3>${place.place_name}</h3>
+            `
             kakao.maps.event.addListener(marker, 'mouseover', () => {
                 infoWindow.open(mapInstance, marker);
             });
             kakao.maps.event.addListener(marker, 'mouseout', () => {
                 infoWindow.close(mapInstance, marker);
             });
+            libList.classList.add('visible');
+            libList.append(span);
+
+            span.addEventListener('click', () => {
+                mapInstance.setCenter(new kakao.maps.LatLng(place.y, place.x));
+                mapInstance.setLevel(3);
+                let line = [new kakao.maps.LatLng(lat, lng),
+                    new kakao.maps.LatLng(place.y, place.x)];
+                const polyline = new kakao.maps.Polyline({
+                    path: line,
+                    strokeWeight: 5,
+                    strokeColor: '#FFAE00',
+                    strokeOpacity: 0.5,
+                    strokeStyle: 'solid'
+                });
+                polyline.setMap(mapInstance);
+
+                libDetail.classList.add('visible');
+                libDetail.innerHTML = `
+                <span class="content">
+                <h3>${place.place_name}</h3>
+                <span>주소: ${place.road_address_name}</span>
+                <span>전화번호: ${place.phone}</span>
+                <a href="${place.place_url}">${place.place_url}</a>
+                <button class="close">닫기</button>
+                </span>
+                `
+                const cloButton = libDetail.querySelector('.close');
+                cloButton.addEventListener('click', () => {
+                    libDetail.classList.remove('visible');
+                })
+            });
+
+
         }
         mapInstance.setBounds(bounds);
         mapInput.value = '';
+
     }
     const url = new URL('https://dapi.kakao.com/v2/local/search/keyword.json'); // .json 누락 주의!
     url.searchParams.set('query', `${destination}`);
@@ -317,3 +365,6 @@ function findLocation(destination) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
 }
+
+
+
