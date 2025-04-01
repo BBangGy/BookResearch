@@ -236,6 +236,7 @@ const currentInfoWindow = new kakao.maps.InfoWindow({
 })
 let lat;
 let lng;
+
 function currentLocation() {
     //navigator.geolocation를 사용해 현재 위치를 작성할 수 있다.
     if (navigator.geolocation) {
@@ -265,6 +266,12 @@ $mapContainer.querySelector('.location-search>.find').onclick = (e) => {
 
 const libList = $mapContainer.querySelector(':scope>.library-list');
 const libDetail = $mapContainer.querySelector(':scope>.library-detail');
+let polyline;
+
+
+const tMapAppKey = 'CmF0Mf2K1naapU2ohPJuE2b1KTjEph5P6jgEEgQn';
+const tmapUrl = 'https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1';
+const pedestrianNavi = $mapContainer.querySelector(':scope>.pedestrian-navi');
 
 function findLocation(destination) {
     const xhr = new XMLHttpRequest();
@@ -321,40 +328,108 @@ function findLocation(destination) {
             libList.append(span);
 
             span.addEventListener('click', () => {
-                mapInstance.setCenter(new kakao.maps.LatLng(place.y, place.x));
-                mapInstance.setLevel(3);
-                let line = [new kakao.maps.LatLng(lat, lng),
-                    new kakao.maps.LatLng(place.y, place.x)];
-                const polyline = new kakao.maps.Polyline({
-                    path: line,
-                    strokeWeight: 5,
-                    strokeColor: '#FFAE00',
-                    strokeOpacity: 0.5,
-                    strokeStyle: 'solid'
-                });
-                polyline.setMap(mapInstance);
+                const bounds = new kakao.maps.LatLngBounds();
+                let currentCoord = {lat, lng};
+                let destinationCoord = {lat: parseFloat(place.y), lng: parseFloat(place.x)};
+                // 기존 경로 선 제거
+                polyline?.setMap(null);
 
+                // Tmap 도보 경로 API 호출
+                const xhrRoute = new XMLHttpRequest();
+                xhrRoute.onreadystatechange = () => {
+                    if (xhrRoute.readyState !== XMLHttpRequest.DONE) return;
+                    if (xhrRoute.status < 200 || xhrRoute.status >= 400) {
+                        alert('길찾기 실패');
+                        return;
+                    }
+
+                    const response = JSON.parse(xhrRoute.responseText);
+                    const features = response.features;
+                    // console.log(features);
+                    const linePath = [];
+
+                    for (let i = 0; i < features.length; i++) {
+                        const geometry = features[i].geometry;
+                        if (geometry.type === "LineString") {
+                            for (let j = 0; j < geometry.coordinates.length; j++) {
+                                const [lng, lat] = geometry.coordinates[j];
+                                linePath.push(new kakao.maps.LatLng(lat, lng));
+                            }
+                        }
+                    }
+                    polyline = new kakao.maps.Polyline({
+                        path: linePath,
+                        strokeWeight: 5,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 0.9,
+                        strokeStyle: 'solid'
+                    });
+                    polyline.setMap(mapInstance);
+
+                    // 거리 및 시간 정보 표시
+                    const info = features.find(f => f.properties && f.properties.totalDistance);
+                    if (info) {
+                        const distance = info.properties.totalDistance;
+                        const time = info.properties.totalTime;
+                        libDetail.innerHTML += `
+                        <div class="route-info">
+                            <span>예상 거리: ${(distance / 1000).toFixed(2)} km</span>
+                            <span>예상 시간: ${(time / 60).toFixed(0)} 분</span>
+                        </div>
+                            `;
+                    }
+                    pedestrianNavi.querySelectorAll('.description').forEach(item => item.remove());
+                    for (let i = 0; i < features.length; i++) {
+                        const detailInfo = features[i]
+                        if (detailInfo.geometry.type === 'Point') {
+                            const detail = detailInfo.properties.description;
+                            pedestrianNavi.querySelector(':scope>.info').innerHTML += `
+                                <li class="description">
+                                ${detail}
+                                </li>`
+                        }
+                    }
+                };
+                const payload = {
+                    startX: currentCoord.lng.toString(),
+                    startY: currentCoord.lat.toString(),
+                    endX: destinationCoord.lng.toString(),
+                    endY: destinationCoord.lat.toString(),
+                    reqCoordType: 'WGS84GEO',
+                    resCoordType: 'WGS84GEO',
+                    startName: '출발지',
+                    endName: '도착지'
+                };
+
+                xhrRoute.open('POST', tmapUrl);
+                xhrRoute.setRequestHeader('Content-Type', 'application/json');
+                xhrRoute.setRequestHeader('appKey', tMapAppKey);
+                xhrRoute.send(JSON.stringify(payload));
+                pedestrianNavi.classList.add('visible');
+                // 기존 라이브러리 상세 정보 (닫기 버튼 포함)
                 libDetail.classList.add('visible');
                 libDetail.innerHTML = `
-                <span class="content">
-                <h3>${place.place_name}</h3>
-                <span>주소: ${place.road_address_name}</span>
-                <span>전화번호: ${place.phone}</span>
-                <a href="${place.place_url}">${place.place_url}</a>
-                <button class="close">닫기</button>
-                </span>
-                `
+                    <span class="content">
+                    <h3>${place.place_name}</h3>
+                    <span>주소: ${place.road_address_name}</span>
+                    <span>전화번호: ${place.phone}</span>
+                    <a href="${place.place_url}">${place.place_url}</a>
+                    <button class="close">닫기</button>
+                    </span>
+                `;
+
                 const cloButton = libDetail.querySelector('.close');
                 cloButton.addEventListener('click', () => {
                     libDetail.classList.remove('visible');
-                })
+                    polyline?.setMap(null); // 경로 선 제거
+                });
+
             });
 
 
         }
         mapInstance.setBounds(bounds);
         mapInput.value = '';
-
     }
     const url = new URL('https://dapi.kakao.com/v2/local/search/keyword.json'); // .json 누락 주의!
     url.searchParams.set('query', `${destination}`);

@@ -33,17 +33,16 @@
 
 #map-container>.library-list {
     width: 20rem;
-    height: 20rem;
+    height: 22rem;
     background-color: #ffffff;
     border-radius: 0.5rem;
     padding: 0.5rem 0.5rem;
-    border: 0.0625rem solid #000000;
+    border: 0.0625rem solid #006CFF;
     position: absolute;
     opacity: 0;
     pointer-events: none;
-    top: 0;
+    top: 4rem;
     left: 3rem;
-    transform: translateY(50%);
     align-items: flex-start;
     display: flex;
     flex-direction: column;
@@ -77,13 +76,81 @@
     width: 20rem;
     height: auto;
     background-color: white;
+    gap: 0.5rem;
 }
+#map-container>.pedestrian-navi{
+    position: absolute;
+    top: 4rem;
+    right: 3rem;
+    pointer-events: none;
+    opacity: 0;
+    background-color: white;
+    border-radius: 0.5rem;
+    border:0.1rem solid #006CFF;
+    width: 25rem;
+    height: 50rem;
+    overflow:hidden scroll;
+}
+#map-container>.pedestrian-navi.visible{
+    opacity: 1;
+    pointer-events: auto;
+}
+#map-container>.pedestrian-navi>.info{
+    margin-inline: 0;
+    width:  25rem;
+    color: white;
+
+
+    align-items: center;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+#map-container>.pedestrian-navi>.info>.description{
+    border-bottom: 0.1rem solid #E2E5E8;
+    width:  25rem;
+    height: 5rem;
+    align-items: flex-start;
+    box-sizing: border-box;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0.5rem;
+}
+
+
+#map-container>.library-detail>.route-info{
+    width: 20rem;
+    height: auto;
+    background-color: deepskyblue;
+    color:white;
+    top: 0;
+    left: 0;
+
+    align-items: center;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
 #map-container>.library-detail>.content{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     gap: 0.5rem;
+}
+#map-container>.library-detail>.content a{
+    text-decoration: none;
+}
+#map-container>.library-detail>.content>.close{
+    top: 0;
+    right: 0;
+    position: absolute;
+    outline: none;
 }
 #map-container>.library-detail.visible{
     opacity: 1;
