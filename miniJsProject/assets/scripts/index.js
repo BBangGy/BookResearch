@@ -8,8 +8,8 @@ const $bestSearch = $searchDialog.querySelector(':scope > .layout-content > .ran
 const $bestBookItems = $bestSearch.querySelector(':scope > .show-ranks > .list');
 const $contentBox = $searchDialog.querySelector(':scope > .layout-content > .popular-container > .content-box');
 
-const apiKey = '8Lk0MkLHo573DCbWLuJXqkh3aCtUK5vbm1NPP%2B13GqQzF9DXlFtKmZEy0iVPtqoWQHnKh6j6gsaEpDTdrXZJVg%3D%3D';
-const restApiKey = 'fa8fbe051d67927bcc168a007e37a73b';
+const apiKey = '발급받은키';
+const restApiKey = '발급받은키';
 const hideLoading = () => $loading.classList.remove('visible');
 const showLoading = () => $loading.classList.add('visible');
 const hideDialog = () => $findDialog.classList.remove('visible');
@@ -269,7 +269,7 @@ const libDetail = $mapContainer.querySelector(':scope>.library-detail');
 let polyline;
 
 
-const tMapAppKey = 'CmF0Mf2K1naapU2ohPJuE2b1KTjEph5P6jgEEgQn';
+const tMapAppKey = '발급받은키';
 const tmapUrl = 'https://apis.openapi.sk.com/tmap/routes/pedestrian?version=1';
 const pedestrianNavi = $mapContainer.querySelector(':scope>.pedestrian-navi');
 
